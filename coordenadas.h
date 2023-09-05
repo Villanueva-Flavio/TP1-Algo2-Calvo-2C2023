@@ -1,0 +1,38 @@
+#ifndef __COORDENADAS_H__
+#define __COORDENADAS_H_
+
+class Coordenadas{
+    private:
+        int x;
+        int y;
+
+    public: 
+        Coordenadas(int x, int y);
+        int getX();
+        int getY();
+        void setX(int x);
+        void setY(int y);
+};
+
+Coordenadas::Coordenadas(int x, int y){
+    this->x = x;
+    this->y = y;
+}
+
+int Coordenadas::getX(){
+    return this->x;
+}
+
+int Coordenadas::getY(){
+    return this->y;
+}
+
+void Coordenadas::setX(int x){
+    this->x = x;
+}
+
+void Coordenadas::setY(int y){
+    this->y = y;
+}
+
+#endif
