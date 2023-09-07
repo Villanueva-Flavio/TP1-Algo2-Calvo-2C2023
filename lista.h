@@ -43,6 +43,8 @@ public:
 
 	int getSize();
 
+	int find(T data);
+
 };
 
 
@@ -76,7 +78,7 @@ template <class T> void Lista<T>::iterar(Iteracion iteracion){
             do{
                 this->iterador = this->iterador->next();
                 this->iteracion++;
-            } while(this->iteracion < this->getsize() -1);
+            } while(this->iteracion < this->getSize() -1);
         }
 	}
 }

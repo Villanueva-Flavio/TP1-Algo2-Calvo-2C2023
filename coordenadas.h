@@ -8,11 +8,17 @@ class Coordenadas{
 
     public: 
         Coordenadas(int x, int y);
+        Coordenadas();
         int getX();
         int getY();
         void setX(int x);
         void setY(int y);
 };
+
+Coordenadas::Coordenadas(){
+    this->x = 0;
+    this->y = 0;
+}
 
 Coordenadas::Coordenadas(int x, int y){
     this->x = x;

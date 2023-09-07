@@ -2,7 +2,6 @@
 #define __JUGADOR_H__
 
 #include "fichas.h"
-#include "coordenadas.h"
 #include "lista.h"
 
 enum Tipo{
@@ -12,50 +11,67 @@ enum Tipo{
 
 class Jugador{
     private:
-        Lista<Fichas>* tesorosRestantes;
-        Lista<Fichas>* espias; 
+        Lista<Fichas*>* tesorosRestantes;
+        Lista<Fichas*>* espias; 
     
     public:
         Jugador();
         ~Jugador();
-        Fichas obtenerFicha(int id, Tipo Ficha);
+        Fichas* obtenerFicha(int id, Tipo Ficha);
         bool jugadorPerdio();
-        void agregarFicha(Fichas ficha, Tipo tipo);
-        void eliminarFicha(Fichas ficha, Tipo tipo);
+        void agregarFicha(Fichas* ficha, Tipo tipo);
+        void eliminarFicha(Fichas* ficha, Tipo tipo);
+        int buscar(Coordenadas* pos);
 
 };
 
 Jugador::Jugador(){
-    tesorosRestantes = new Lista<Fichas>();
-    espias = new Lista<Fichas>();
+    this->tesorosRestantes = new Lista<Fichas*>();
+    this->espias = new Lista<Fichas*>();
 }
 
 Jugador::~Jugador(){
-    delete tesorosRestantes;
-    delete espias;
+    delete this->tesorosRestantes;
+    delete this->espias;
 }
 
-Fichas Jugador::obtenerFicha(int id, Tipo tipo){
+Fichas* Jugador::obtenerFicha(int id, Tipo tipo){
     if(tipo == TESORO){
-        return tesorosRestantes->getLData(id);
+        return this->tesorosRestantes->getLData(id);
     }else{
-        return espias->getLData(id);
+        return this->espias->getLData(id);
     }
 }
+
+int Jugador::buscar(Coordenadas* pos){
+    int resultado = -1;
+
+    for(int i = 0; i < this->tesorosRestantes->getSize(); i++){
+        if(this->tesorosRestantes->getLData(i)->getX() == pos->getX() && this->tesorosRestantes->getLData(i)->getY() == pos->getY()){
+            resultado = i;
+            i = this->tesorosRestantes->getSize();
+        } else if (this->espias->getLData(i)->getX() == pos->getX() && this->espias->getLData(i)->getY() == pos->getY()){
+            resultado = i;
+            i = this->tesorosRestantes->getSize();
+        }
+    }
+    return resultado;
+}
+
 
 bool Jugador::jugadorPerdio(){
-    return tesorosRestantes->getSize() == 0;
+    return this->tesorosRestantes->getSize() == 0;
 }
 
-void Jugador::agregarFicha(Fichas ficha, Tipo tipo){
+void Jugador::agregarFicha(Fichas* ficha, Tipo tipo){
     if(tipo == TESORO){
-        tesorosRestantes->add(ficha);
+        this->tesorosRestantes->add(ficha);
     }else{
-        espias->add(ficha);
+        this->espias->add(ficha);
     }
 }
 
-void Jugador::eliminarFicha(Fichas ficha, Tipo tipo){
+void Jugador::eliminarFicha(Fichas* ficha, Tipo tipo){
     if(tipo == TESORO){
         this->tesorosRestantes->remove(this->tesorosRestantes->getIter());
     } else {
