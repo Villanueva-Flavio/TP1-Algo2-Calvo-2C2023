@@ -43,8 +43,6 @@ public:
 
 	int getSize();
 
-	int find(T data);
-
 };
 
 
