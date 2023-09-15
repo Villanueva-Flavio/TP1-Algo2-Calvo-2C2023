@@ -36,9 +36,12 @@ int Juego::buscarFicha(Coordenadas* pos){
 void Juego::asignarFichas(int jugador, Tipo tipo){
 
     this->preguntarCoordenada(jugador, tipo);
-    Coordenadas* pos = (jugador == 0)? 
+    Coordenadas aux = (jugador == 0)? 
         this->jugador1->getFichas(tipo)->getLData(this->jugador1->getFichas(tipo)->getSize() - 1)->getPos():
         this->jugador2->getFichas(tipo)->getLData(this->jugador2->getFichas(tipo)->getSize() - 1)->getPos();
+    
+    Coordenadas* pos = new Coordenadas(aux.getX(), aux.getY());
+    
     while (this->jugador1->buscar(pos) != -1 && this->jugador2->buscar(pos) != -1){
         std::cout << "Coordenada ya ocupada, ingrese otra" << std::endl;
         (jugador == 0)?

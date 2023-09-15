@@ -35,6 +35,27 @@ int Jugador::buscar(Coordenadas* pos){
         if(this->tesorosRestantes->getLData(i)->getX() == pos->getX() && this->tesorosRestantes->getLData(i)->getY() == pos->getY()){
             resultado = i;
             i = this->tesorosRestantes->getSize();
+        }
+    }
+
+    for(int i = 0; i < this->espias->getSize(); i++){
+        if(this->espias->getLData(i)->getX() == pos->getX() && this->espias->getLData(i)->getY() == pos->getY()){
+            resultado = i;
+            i = this->tesorosRestantes->getSize();
+        }
+    }
+
+    for(int i = 0; i < this->busqueda->getSize(); i++){
+        if(this->busqueda->getLData(i)->getX() == pos->getX() && this->busqueda->getLData(i)->getY() == pos->getY()){
+            resultado = i;
+            i = this->tesorosRestantes->getSize();
+        }
+    }
+/* 
+    for(int i = 0; i < this->tesorosRestantes->getSize(); i++){
+        if(this->tesorosRestantes->getLData(i)->getX() == pos->getX() && this->tesorosRestantes->getLData(i)->getY() == pos->getY()){
+            resultado = i;
+            i = this->tesorosRestantes->getSize();
         } else if (this->espias->getLData(i)->getX() == pos->getX() && this->espias->getLData(i)->getY() == pos->getY()){
             resultado = i;
             i = this->tesorosRestantes->getSize();
@@ -42,7 +63,7 @@ int Jugador::buscar(Coordenadas* pos){
             resultado = i;
             i = this->tesorosRestantes->getSize();
         }
-    }
+    } */
     return resultado;
 }
 
