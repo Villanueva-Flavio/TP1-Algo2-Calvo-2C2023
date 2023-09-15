@@ -40,6 +40,8 @@ struct Juego{
 void preguntarCoordenada(Coordenada* pos){
     std::cout << "Ingrese una coordenada en formato X Y" << std::endl;
     std::cin >> pos->x >> pos->y;
+    pos->x -= 1;
+    pos->y -= 1;
     while(pos->x < 0 || pos->x > MAX_SIZE || pos->y < 0 || pos->y > MAX_SIZE){
         std::cout << "Coordenada fuera de rango, ingrese otra" << std::endl;
         std::cin >> pos->x >> pos->y;
@@ -202,6 +204,8 @@ bool limiteDeEspias(Jugador jugador){
 
 void salirDelJuego(){
     std::cout << "Saliendo del juego..." << std::endl;
+    system("rm j1.txt");
+    system("rm j2.txt");
     exit(0);
 }
 
@@ -209,32 +213,32 @@ Coordenada obtenerNuevaPosicion(char direccion, Coordenada aux){
     Coordenada pos = aux;
     switch(direccion){
         case 'W':
-            pos.y++;
+            pos.y--;
             break;
         case 'A':
             pos.x--;
             break;
         case 'S':
-            pos.y--;
+            pos.y++;
             break;
         case 'D':
             pos.x++;
             break;
         case 'Q':
             pos.x--;
-            pos.y++;
+            pos.y--;
             break;
         case 'E':
             pos.x++;
-            pos.y++;
+            pos.y--;
             break;
         case 'Z':
             pos.x--;
-            pos.y--;
+            pos.y++;
             break;
         case 'C':
             pos.x++;
-            pos.y--;
+            pos.y++;
             break;
         case 'X':
             salirDelJuego();
@@ -246,15 +250,17 @@ Coordenada obtenerNuevaPosicion(char direccion, Coordenada aux){
 void seleccionarEspia(int* seleccion, int cantidad){
     std::cout << "Ingrese el numero del espia que desea mover" << std::endl;
     std::cin >> *seleccion;
-    while(*seleccion < 0 || *seleccion > cantidad){
+    *seleccion -= 1;
+    while((*seleccion < 0 || *seleccion > cantidad) && cantidad > 0){
         std::cout << "Numero de espia invalido, ingrese otro" << std::endl;
         std::cin >> *seleccion;
+        *seleccion -= 1;
     }
 }
 
 void notificarTesoro(int jugadorActual, Coordenada nueva){
     std::ofstream archivo((jugadorActual == 0)? "j1.txt" : "j2.txt", std::ios_base::app);
-    archivo << std::endl << std::endl << "Tesoro encontrado en: (" << nueva.x << ", " << nueva.y << ")" << std::endl;
+    archivo << std::endl << std::endl << "Tesoro encontrado en: (" << nueva.x +1 << ", " << nueva.y +1 << ")" << std::endl;
     archivo.close();
 }
 
@@ -293,7 +299,7 @@ void llenarMapa(Juego juego, int jugadorActual, char mapa[MAX_SIZE][MAX_SIZE]){
         mapa[juego.jugador[jugadorActual].tesoros[i].posicion.x][juego.jugador[jugadorActual].tesoros[i].posicion.y] = 'T';
     }
     for(int i = 0; i < juego.jugador[jugadorActual].cantEspias; i++){
-        mapa[juego.jugador[jugadorActual].espias[i].posicion.x][juego.jugador[jugadorActual].espias[i].posicion.y] = (char)(jugadorActual + 1);
+        mapa[juego.jugador[jugadorActual].espias[i].posicion.x][juego.jugador[jugadorActual].espias[i].posicion.y] = (jugadorActual == 0)? '1' : '2';
     }
     for(int i = 0; i < juego.cantInactivas; i++){
         mapa[juego.inactivas[i].posicion.x][juego.inactivas[i].posicion.y] = 'X';
@@ -302,12 +308,15 @@ void llenarMapa(Juego juego, int jugadorActual, char mapa[MAX_SIZE][MAX_SIZE]){
 
 void imprimirMapa(char mapa[MAX_SIZE][MAX_SIZE], int jugadorActual){
     FILE* archivo = fopen((jugadorActual == 0)? "j1.txt" : "j2.txt", "w");
+    fprintf(archivo, " _________________________________________\n");
     for(int i = 0; i < MAX_SIZE; i++){
+        fprintf(archivo, "%c", '|');
         for(int j = 0; j < MAX_SIZE; j++){
-            fprintf(archivo, "%c", mapa[i][j]);
+            fprintf(archivo, "%c ", mapa[i][j]);
         }
-        fprintf(archivo, "\n");
+        fprintf(archivo, "|\n");
     }
+    fprintf(archivo, "|________________________________________|\n");
     fclose(archivo);
 }
 
@@ -324,7 +333,7 @@ void mostrarEspiasVivos(Jugador jugador, int jugadorActual){
     archivo << std::endl << std::endl << "Espias vivos: " << jugador.cantEspias << std::endl;
     archivo << "Posiciones: " << std::endl;
     for(int i = 0; i < jugador.cantEspias; i++){
-        archivo << i << " -> (" << jugador.espias[i].posicion.x << ", " << jugador.espias[i].posicion.y << ") ";
+        archivo << i +1 << " -> (" << jugador.espias[i].posicion.x +1 << ", " << jugador.espias[i].posicion.y +1 << ") " << std::endl;
     }
     archivo << std::endl;
     archivo.close();
@@ -348,9 +357,10 @@ void Jugar(Juego* juego){
     char direccionAux;
     while(jugadorGanador(*juego) == -1){
         for(int i = 0; i < MAX_JUGADORES; i ++){
+            system("clear");
             mostrarMapa(*juego, i);
+            mostrarEspiasVivos(juego->jugador[i], i);
             if(tieneEspiaVivo(juego->jugador[i])){
-                mostrarEspiasVivos(juego->jugador[i], i);
                 seleccionarEspia(&seleccionAux, juego->jugador[i].cantEspias);
                 solicitarDireccion(&direccionAux, juego, i, seleccionAux);
                 moverEspia(juego, seleccionAux, direccionAux, i);                
@@ -360,6 +370,7 @@ void Jugar(Juego* juego){
             }
         }
     }
+    juego->cantInactivas = 0;
 }
 
 void mensajeGanador(Juego juego){
@@ -372,5 +383,7 @@ int main(){
     iniciarJuego(&juego);
     Jugar(&juego);
     mensajeGanador(juego);
+    system("rm j1.txt");
+    system("rm j2.txt");
     return 0;
 }
