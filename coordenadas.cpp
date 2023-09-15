@@ -25,3 +25,4 @@ void Coordenadas::setX(int x){
 void Coordenadas::setY(int y){
     this->y = y;
 }
+

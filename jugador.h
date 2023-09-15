@@ -24,7 +24,7 @@ class Jugador{
         void agregarFicha(Fichas* ficha, Tipo tipo);
         void eliminarFicha(Fichas* ficha, Tipo tipo);
         int buscar(Coordenadas* pos);
-        
+        Lista<Fichas*>* getFichas(Tipo tipo);        
 };
 
 #endif

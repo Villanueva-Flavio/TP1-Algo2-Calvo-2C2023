@@ -6,7 +6,7 @@
 class Fichas{
     private:
         Coordenadas pos;
-        bool activa;
+        int activa;
 
     public:
         Fichas(int x, int y);
@@ -14,8 +14,9 @@ class Fichas{
         int getY();
         void setX(int x);
         void setY(int y);
-        bool getActiva();
-        void setActiva(bool activa);
+        Coordenadas getPos();
+        int getActiva();
+        void setActiva(int activa);
 };
 
 

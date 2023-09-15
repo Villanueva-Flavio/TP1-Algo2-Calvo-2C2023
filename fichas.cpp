@@ -1,12 +1,17 @@
 #include "fichas.h"
 
-Fichas::Fichas(int x, int y) : pos(x, y), activa(true){}
+Fichas::Fichas(int x, int y) : pos(x, y), activa(0){}
 
-bool Fichas::getActiva(){
+
+Coordenadas Fichas::getPos(){
+    return Coordenadas(this->getX(), this->getY());
+}
+
+int Fichas::getActiva(){
     return this->activa;
 }
 
-void Fichas::setActiva(bool activa){
+void Fichas::setActiva(int activa){
     this->activa = activa;
 }
 

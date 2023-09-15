@@ -16,8 +16,8 @@ class Juego{
         void iniciarJuego();
         void imprimirTableros();
         void jugarTurno(int jugador);
-        void preguntarCoordenada(Coordenadas* pos);
-        void asignarFichas(Coordenadas* pos, int jugador);
+        void preguntarCoordenada(int jugador, Tipo tipo);
+        void asignarFichas(int jugador, Tipo tipo);
         int buscarFicha(Coordenadas* pos);
 };
 

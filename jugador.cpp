@@ -12,14 +12,20 @@ Jugador::~Jugador(){
     delete this->busqueda;
 }
 
+Lista<Fichas*>* Jugador::getFichas(Tipo tipo){
+    return (tipo == TESORO)? 
+        this->tesorosRestantes : 
+        (tipo == ESPIA)? 
+            this->espias: 
+            this->busqueda;
+}
+
 Fichas* Jugador::obtenerFicha(int id, Tipo tipo){
-    if(tipo == TESORO){
-        return this->tesorosRestantes->getLData(id);
-    }else if(tipo == ESPIA){
-        return this->espias->getLData(id);
-    } else {
-        return this->busqueda->getLData(id);
-    }
+    return (tipo == TESORO)?
+        this->tesorosRestantes->getLData(id):
+        (tipo == ESPIA)?
+            this->espias->getLData(id):
+            this->busqueda->getLData(id);
 }
 
 int Jugador::buscar(Coordenadas* pos){
@@ -45,21 +51,17 @@ bool Jugador::jugadorPerdio(){
 }
 
 void Jugador::agregarFicha(Fichas* ficha, Tipo tipo){
-    if(tipo == TESORO){
-        this->tesorosRestantes->add(ficha);
-    }else if(tipo == ESPIA){
-        this->espias->add(ficha);
-    } else {
-        this->busqueda->add(ficha);
-    }
+    (tipo == TESORO)?
+        this->tesorosRestantes->add(ficha):
+        (tipo == ESPIA)?
+            this->espias->add(ficha):
+            this->busqueda->add(ficha);
 }
 
 void Jugador::eliminarFicha(Fichas* ficha, Tipo tipo){
-    if(tipo == TESORO){
-        this->tesorosRestantes->remove(this->tesorosRestantes->getIter());
-    } else if(tipo == ESPIA) {
-        this->espias->remove(this->espias->getIter());
-    } else {
-        this->busqueda->remove(this->busqueda->getIter());
-    }
+    (tipo == TESORO)?
+        this->tesorosRestantes->remove(this->tesorosRestantes->getIter()):
+        (tipo == ESPIA)?
+            this->espias->remove(this->espias->getIter()):
+            this->busqueda->remove(this->busqueda->getIter());
 }
