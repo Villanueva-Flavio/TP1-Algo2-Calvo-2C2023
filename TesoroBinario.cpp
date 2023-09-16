@@ -1,46 +1,27 @@
+#include "Juego.h"
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
 
-#define MAX_INACTIVAS 50
-#define MAX_TESOROS 5
-#define MAX_ESPIAS 50
-#define MAX_JUGADORES 2
 #define MAX_SIZE 20
+
+using namespace std;
 
 enum Tipo{TESORO, ESPIA};
 
-struct Coordenada{
-    int x;
-    int y;
-};
 
-struct Fichas{
-    Coordenada posicion;
-    int turnosInactiva;
-};
 
-struct Jugador{
-    Fichas tesoros[MAX_TESOROS];
-    Fichas espias[MAX_ESPIAS];
-    int cantTesoros;
-    int cantEspias;
-};
 
-struct Juego{
-    Jugador jugador[MAX_JUGADORES];
-    Fichas inactivas[MAX_INACTIVAS];
-    int cantInactivas;
-};
+
 
 void preguntarCoordenada(Coordenada* pos){
-    std::cout << "Ingrese una coordenada en formato X Y" << std::endl;
-    std::cin >> pos->x >> pos->y;
+    cout << "Ingrese una coordenada en formato X Y" << endl;
+    cin >> pos->x >> pos->y;
     pos->x -= 1;
     pos->y -= 1;
     while(pos->x < 0 || pos->x > MAX_SIZE || pos->y < 0 || pos->y > MAX_SIZE){
-        std::cout << "Coordenada fuera de rango, ingrese otra" << std::endl;
-        std::cin >> pos->x >> pos->y;
+        cout << "Coordenada fuera de rango, ingrese otra" << endl;
+        cin >> pos->x >> pos->y;
     }
 }
 
@@ -63,10 +44,10 @@ bool coordenadaOcupada(Coordenada pos, Jugador jugador[MAX_JUGADORES]){
 
 Coordenada obtenerPosicion(Jugador jugador[MAX_JUGADORES]){
     Coordenada pos;
-    std::cout << "Ficha numero " << jugador->cantTesoros + jugador->cantEspias + 1 << std::endl;
+    cout << "Ficha numero " << jugador->cantTesoros + jugador->cantEspias + 1 << endl;
     preguntarCoordenada(&pos);
     while(coordenadaOcupada(pos, jugador)){
-        std::cout << "Coordenada ocupada, ingrese otra" << std::endl;
+        cout << "Coordenada ocupada, ingrese otra" << endl;
         preguntarCoordenada(&pos);
     }
     return pos;
@@ -74,7 +55,7 @@ Coordenada obtenerPosicion(Jugador jugador[MAX_JUGADORES]){
 
 void generarFicha(Jugador jugador[MAX_JUGADORES], int jugadorActual, Tipo tipo){
     system("clear");
-    std::cout << "Jugador " << jugadorActual + 1 << std::endl;
+    cout << "Jugador " << jugadorActual + 1 << endl;
     Coordenada pos = obtenerPosicion(jugador);
     jugador[jugadorActual].tesoros[jugador[jugadorActual].cantTesoros].posicion = pos;
     jugador[jugadorActual].cantTesoros++;
@@ -210,7 +191,7 @@ bool limiteDeEspias(Jugador jugador){
 }
 
 void salirDelJuego(){
-    std::cout << "Saliendo del juego..." << std::endl;
+    cout << "Saliendo del juego..." << endl;
     system("rm j1.txt");
     system("rm j2.txt");
     exit(0);
@@ -255,37 +236,37 @@ Coordenada obtenerNuevaPosicion(char direccion, Coordenada aux){
 }
 
 void seleccionarEspia(int* seleccion, int cantidad){
-    std::cout << "Ingrese el numero del espia que desea mover" << std::endl;
-    std::cin >> *seleccion;
+    cout << "Ingrese el numero del espia que desea mover" << endl;
+    cin >> *seleccion;
     *seleccion -= 1;
     while((*seleccion < 0 || *seleccion > cantidad) && cantidad > 0){
-        std::cout << "Numero de espia invalido, ingrese otro" << std::endl;
-        std::cin >> *seleccion;
+        cout << "Numero de espia invalido, ingrese otro" << endl;
+        cin >> *seleccion;
         *seleccion -= 1;
     }
 }
 
 void notificarTesoro(int jugadorActual, Coordenada nueva){
-    std::ofstream archivo((jugadorActual == 0)? "j1.txt" : "j2.txt", std::ios_base::app);
-    archivo << std::endl << std::endl << "Tesoro encontrado en: (" << nueva.x +1 << ", " << nueva.y +1 << ")" << std::endl;
+    ofstream archivo((jugadorActual == 0)? "j1.txt" : "j2.txt", ios_base::app);
+    archivo << endl << endl << "Tesoro encontrado en: (" << nueva.x +1 << ", " << nueva.y +1 << ")" << endl;
     archivo.close();
 }
 
 void imprimirMensajeMovimientos(){
-    std::cout << "[W] Arriba           " << "[A] Izquierda      " << "[S] Abajo           " << "[D] Derecha       " << std::endl;
-    std::cout << "[Q] Arriba-Izquierda " << "[E] Arriba-Derecha " << "[Z] Abajo-Izquierda " << "[C] Abajo-Derecha " << std::endl;
-    std::cout << "[X] Salir del programa." << std::endl;
+    cout << "[W] Arriba           " << "[A] Izquierda      " << "[S] Abajo           " << "[D] Derecha       " << endl;
+    cout << "[Q] Arriba-Izquierda " << "[E] Arriba-Derecha " << "[Z] Abajo-Izquierda " << "[C] Abajo-Derecha " << endl;
+    cout << "[X] Salir del programa." << endl;
 }
 
 void solicitarDireccion(char* direccionAux, Juego* juego, int jugadorActual, int espiaActual){
     Coordenada nueva;
-    std::cout << "Seleccione una dirección: " << std::endl;
+    cout << "Seleccione una dirección: " << endl;
     imprimirMensajeMovimientos();
-    std::cin >> *direccionAux;
+    cin >> *direccionAux;
     nueva = obtenerNuevaPosicion(*direccionAux, juego->jugador[jugadorActual].espias[espiaActual].posicion);
     while(!estaEnRango(nueva) || estaInactiva(*juego, nueva) || !insercionCorrecta(*direccionAux)){
-        std::cout << "Direccion invalida, ingrese otra" << std::endl;
-        std::cin >> *direccionAux;
+        cout << "Direccion invalida, ingrese otra" << endl;
+        cin >> *direccionAux;
         nueva = obtenerNuevaPosicion(*direccionAux, juego->jugador[jugadorActual].espias[espiaActual].posicion);
         if(hayUnTesoro(*juego, nueva)){
             notificarTesoro(jugadorActual, nueva);
@@ -336,13 +317,13 @@ void mostrarMapa(Juego juego, int jugadorActual){
 }
 
 void mostrarEspiasVivos(Jugador jugador, int jugadorActual){
-    std::ofstream archivo((jugadorActual == 0)? "j1.txt" : "j2.txt", std::ios_base::app);
-    archivo << std::endl << std::endl << "Espias vivos: " << jugador.cantEspias << std::endl;
-    archivo << "Posiciones: " << std::endl;
+    ofstream archivo((jugadorActual == 0)? "j1.txt" : "j2.txt", ios_base::app);
+    archivo << endl << endl << "Espias vivos: " << jugador.cantEspias << endl;
+    archivo << "Posiciones: " << endl;
     for(int i = 0; i < jugador.cantEspias; i++){
-        archivo << i +1 << " -> (" << jugador.espias[i].posicion.x +1 << ", " << jugador.espias[i].posicion.y +1 << ") " << std::endl;
+        archivo << i +1 << " -> (" << jugador.espias[i].posicion.x +1 << ", " << jugador.espias[i].posicion.y +1 << ") " << endl;
     }
-    archivo << std::endl;
+    archivo << endl;
     archivo.close();
 }
 
@@ -359,7 +340,7 @@ void moverEspia(Juego* juego, int espiaActual, char direccion, int jugadorActual
     disminuirTurnoInactivo(juego);
 }
 
-void Jugar(Juego* juego){
+void jugar(Juego* juego){
     int seleccionAux;
     char direccionAux;
     while(jugadorGanador(*juego) == -1){
@@ -368,7 +349,7 @@ void Jugar(Juego* juego){
             mostrarMapa(*juego, i);
             mostrarEspiasVivos(juego->jugador[i], i);
             if(tieneEspiaVivo(juego->jugador[i])){
-                std::cout << "Jugador " << i + 1 << std::endl;
+                cout << "Jugador " << i + 1 << endl;
                 seleccionarEspia(&seleccionAux, juego->jugador[i].cantEspias);
                 solicitarDireccion(&direccionAux, juego, i, seleccionAux);
                 moverEspia(juego, seleccionAux, direccionAux, i);                
@@ -383,13 +364,13 @@ void Jugar(Juego* juego){
 void mensajeGanador(Juego juego){
     int ganador = jugadorGanador(juego);
     system("clear");
-    std::cout << std::endl << std::endl << std::endl << "HA GANADO EL JUGADOR " << ganador + 1 << std::endl << std::endl << std::endl;
+    cout << endl << endl << endl << "HA GANADO EL JUGADOR " << ganador + 1 << endl << endl << endl;
 }
 
 int main(){
     Juego juego;
     iniciarJuego(&juego);
-    Jugar(&juego);
+    jugar(&juego);
     mensajeGanador(juego);
     salirDelJuego();
     return 0;
