@@ -8,8 +8,6 @@
 #define MAX_JUGADORES 2
 #define MAX_SIZE 20
 
-// ESTRUCTURAS
-
 enum Tipo{TESORO, ESPIA};
 
 struct Coordenada{
@@ -34,8 +32,6 @@ struct Juego{
     Fichas inactivas[MAX_INACTIVAS];
     int cantInactivas;
 };
-
-// CARGA DEL JUEGO
 
 void preguntarCoordenada(Coordenada* pos){
     std::cout << "Ingrese una coordenada en formato X Y" << std::endl;
@@ -67,6 +63,7 @@ bool coordenadaOcupada(Coordenada pos, Jugador jugador[MAX_JUGADORES]){
 
 Coordenada obtenerPosicion(Jugador jugador[MAX_JUGADORES]){
     Coordenada pos;
+    std::cout << "Ficha numero " << jugador->cantTesoros + jugador->cantEspias + 1 << std::endl;
     preguntarCoordenada(&pos);
     while(coordenadaOcupada(pos, jugador)){
         std::cout << "Coordenada ocupada, ingrese otra" << std::endl;
@@ -76,6 +73,8 @@ Coordenada obtenerPosicion(Jugador jugador[MAX_JUGADORES]){
 }
 
 void generarFicha(Jugador jugador[MAX_JUGADORES], int jugadorActual, Tipo tipo){
+    system("clear");
+    std::cout << "Jugador " << jugadorActual + 1 << std::endl;
     Coordenada pos = obtenerPosicion(jugador);
     jugador[jugadorActual].tesoros[jugador[jugadorActual].cantTesoros].posicion = pos;
     jugador[jugadorActual].cantTesoros++;
@@ -85,14 +84,22 @@ void generarFicha(Jugador jugador[MAX_JUGADORES], int jugadorActual, Tipo tipo){
     }
 }
 
+void limpiarTopes(Juego* juego){
+    for(int i = 0; i < MAX_JUGADORES; i++){
+        juego->jugador[i].cantTesoros = 0;
+        juego->jugador[i].cantEspias = 0;
+    }
+    juego->cantInactivas = 0;
+}
+
 void iniciarJuego(Juego* juego){
+    limpiarTopes(juego);
     for(int i = 0; i < MAX_TESOROS+1; i++){
         for(int j = 0; j < MAX_JUGADORES; j++){
             generarFicha(juego->jugador, j, (i == MAX_TESOROS)? ESPIA : TESORO);
         }
     }
 }
-
 
 int jugadorGanador(Juego juego){
     return (juego.jugador[0].cantTesoros == 0)? 1 : (juego.jugador[1].cantTesoros == 0)? 0 : -1;
@@ -213,32 +220,32 @@ Coordenada obtenerNuevaPosicion(char direccion, Coordenada aux){
     Coordenada pos = aux;
     switch(direccion){
         case 'W':
-            pos.y--;
-            break;
-        case 'A':
             pos.x--;
             break;
+        case 'A':
+            pos.y--;
+            break;
         case 'S':
-            pos.y++;
+            pos.x++;
             break;
         case 'D':
-            pos.x++;
+            pos.y++;
             break;
         case 'Q':
             pos.x--;
             pos.y--;
             break;
         case 'E':
-            pos.x++;
-            pos.y--;
-            break;
-        case 'Z':
             pos.x--;
             pos.y++;
             break;
+        case 'Z':
+            pos.x++;
+            pos.y--;
+            break;
         case 'C':
             pos.x++;
-            pos.y++;
+            pos.y--;
             break;
         case 'X':
             salirDelJuego();
@@ -308,7 +315,7 @@ void llenarMapa(Juego juego, int jugadorActual, char mapa[MAX_SIZE][MAX_SIZE]){
 
 void imprimirMapa(char mapa[MAX_SIZE][MAX_SIZE], int jugadorActual){
     FILE* archivo = fopen((jugadorActual == 0)? "j1.txt" : "j2.txt", "w");
-    fprintf(archivo, " _________________________________________\n");
+    fprintf(archivo, " ________________________________________\n");
     for(int i = 0; i < MAX_SIZE; i++){
         fprintf(archivo, "%c", '|');
         for(int j = 0; j < MAX_SIZE; j++){
@@ -361,6 +368,7 @@ void Jugar(Juego* juego){
             mostrarMapa(*juego, i);
             mostrarEspiasVivos(juego->jugador[i], i);
             if(tieneEspiaVivo(juego->jugador[i])){
+                std::cout << "Jugador " << i + 1 << std::endl;
                 seleccionarEspia(&seleccionAux, juego->jugador[i].cantEspias);
                 solicitarDireccion(&direccionAux, juego, i, seleccionAux);
                 moverEspia(juego, seleccionAux, direccionAux, i);                
@@ -370,11 +378,11 @@ void Jugar(Juego* juego){
             }
         }
     }
-    juego->cantInactivas = 0;
 }
 
 void mensajeGanador(Juego juego){
     int ganador = jugadorGanador(juego);
+    system("clear");
     std::cout << std::endl << std::endl << std::endl << "HA GANADO EL JUGADOR " << ganador + 1 << std::endl << std::endl << std::endl;
 }
 
@@ -383,7 +391,6 @@ int main(){
     iniciarJuego(&juego);
     Jugar(&juego);
     mensajeGanador(juego);
-    system("rm j1.txt");
-    system("rm j2.txt");
+    salirDelJuego();
     return 0;
 }
